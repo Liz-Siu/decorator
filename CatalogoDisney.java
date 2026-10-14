@@ -5,6 +5,8 @@ public class CatalogoDisney implements CatalogoPeliculas {
     public ServicioStreaming getServicio() {
         return ServicioStreaming.DISNEY;
     }
-
-    //TODO: Implementar el método obtenerPeliculas() para devolver una lista de películas disponibles en el catálogo de Disney.
+    @Override
+    public List<String> obtenerPeliculas() {
+        return List.of("El rey leon", "Toy Story", "Frozen");
+    }
 }
