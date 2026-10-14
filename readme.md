@@ -205,9 +205,16 @@ Ejecuta `Main` y verifica que:
 #### Preguntas de Análisis:
 
 - ¿Qué responsabilidad añade `SuscripcionDecorator` al catálogo que envuelve?
+Le agrega la responsabilidad de controlar el acceso según las suscripciones del usuario. El catálogo original solo sabe devolver películas; el decorador se encarga de verificar, antes de devolverlas, si el usuario tiene activo el servicio correspondiente. Si no lo tiene, lanza una excepción IllegalStateException con un mensaje que indica el motivo. Así el catálogo queda intacto y la validación se puede agregar o quitar sin tocarlo.
+
 - ¿Por qué `CatalogoDecorator` guarda una referencia de tipo `CatalogoPeliculas` y no de una clase concreta?
+Porque de esa manera puede envolver cualquier implementación de la interfaz: CatalogoDisney, CatalogoWarner, CatalogoParamount o incluso otro decorador. Si guardara una clase concreta (por ejemplo CatalogoDisney), el decorador solo serviría para Disney y tendríamos que crear uno distinto para cada catálogo, perdiendo toda la flexibilidad del patrón. Al guardar la interfaz, el decorador es genérico y reutilizable.
+
 - ¿Qué ventaja tiene comprobar la suscripción al consultar el catálogo, en vez de generar una clase para cada combinación de suscripciones?
+La ventaja principal es que evita la explosión de clases. Con 3 servicios y la posibilidad de tener cualquier combinación activa, tendríamos que crear muchísimas subclases (una por cada combinación posible). Con Decorator solo tenemos los 3 catálogos concretos + 1 decorador, y el comportamiento se arma en tiempo de ejecución según las suscripciones que tenga el usuario en ese momento. Además, si mañana se agrega un nuevo servicio, solo se crea un catálogo más y el decorador sigue funcionando igual, sin modificar nada existente.
+
 - ¿Qué cambiarías si un usuario pudiera acceder a varios catálogos con una única suscripción de paquete?
+Agregaría un nuevo valor al enum ServicioStreaming, por ejemplo PAQUETE, que represente la suscripción combinada. Después modificaría el método tieneSuscripcion de la clase Usuario para que devuelva true si el usuario tiene el paquete aunque no tenga el servicio individual. Por ejemplo: si el usuario tiene PAQUETE, entonces tieneSuscripcion(DISNEY), tieneSuscripcion(WARNER) y tieneSuscripcion(PARAMOUNT) devolverían true. De esta forma el SuscripcionDecorator no necesitaría cambiar en absoluto, porque seguiría preguntando lo mismo y recibiría la respuesta correcta.
 
 ## Diagrama de clases
 
